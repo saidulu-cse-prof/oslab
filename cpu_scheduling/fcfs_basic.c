@@ -5,7 +5,7 @@
  * the exact order it is entered (process order == arrival order).
  * This is the simplest lab version of FCFS: no arrival-time input,
  * no Gantt chart - just completion / turnaround / waiting times.
- * Prof: Saidulu Alli
+ *
  * Compile: gcc fcfs_basic.c -o fcfs_basic
  * Run    : ./fcfs_basic
  */
