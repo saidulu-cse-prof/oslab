@@ -1,23 +1,62 @@
-name: C/C++ CI
+name: C/C++ CI Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Install Build Essentials
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential
+
+    - name: Check Directory Contents
+      run: |
+        echo "Current working directory:"
+        pwd
+        echo "Files in root:"
+        ls -la
+        if [ -d "oslab" ]; then
+          echo "Files inside oslab:"
+          ls -la oslab
+        fi
+
+    - name: Compile C/C++ Programs
+      run: |
+        # If your files are directly in the root or inside 'oslab', we navigate or build them.
+        # This script checks both locations and compiles all .c and .cpp files found.
+        
+        TARGET_DIR="."
+        if [ -d "oslab" ]; then
+          TARGET_DIR="oslab"
+        fi
+        
+        echo "Compiling programs in $TARGET_DIR..."
+        cd "$TARGET_DIR"
+        
+        # Example 1: If you have a Makefile, uncomment the line below:
+        # make
+        
+        # Example 2: Automatic compilation of individual C/C++ files
+        for file in *.c; do
+          if [ -f "$file" ]; then
+            echo "Compiling $file..."
+            gcc -Wall "$file" -o "${file%.c}.out"
+          fi
+        done
+        
+        for file in *.cpp; do
+          if [ -f "$file" ]; then
+            echo "Compiling $file..."
+            g++ -Wall "$file" -o "${file%.cpp}.out"
+          fi
+        done
